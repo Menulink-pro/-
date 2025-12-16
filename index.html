@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>MenuLink - شاي صولة (عرض)</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+  <!-- رأس الصفحة -->
+  <header class="header">
+    <div class="brand">
+      <div class="logo-box">
+        <img id="storeLogo" alt="logo" />
+      </div>
+      <div class="brand-text">
+        <h1 id="storeName" class="store-name">شاي صولة</h1>
+        <div class="store-sub">منيو إلكتروني • الطلب يوصل واتساب بضغطة زر</div>
+      </div>
+    </div>
+  </header>
+
+  <!-- أقسام عرضية -->
+  <nav class="tabs-wrap">
+    <div class="tabs" id="categoryTabs"></div>
+  </nav>
+
+  <!-- قائمة الأصناف -->
+  <main class="menu" id="menuList"></main>
+
+  <!-- شريط السلة -->
+  <footer class="cart-bar hidden" id="cartBar">
+    <div class="cart-info">
+      <div class="cart-label">ملخص الطلب</div>
+      <div class="cart-total" id="cartTotal">0 ريال</div>
+    </div>
+    <button class="btn btn-outline" id="openCartBtn">عرض السلة</button>
+  </footer>
+
+  <!-- Bottom Sheet المنتج -->
+  <div class="overlay" id="productSheetOverlay" aria-hidden="true">
+    <div class="sheet" role="dialog" aria-modal="true">
+      <div class="sheet-top">
+        <div class="sheet-title">
+          <div id="sheetProductName" class="sheet-name">اسم الصنف</div>
+          <div id="sheetProductPrice" class="sheet-price">0 ريال</div>
+        </div>
+        <button class="icon-btn icon-close" id="closeProductSheet" aria-label="إغلاق">✕</button>
+      </div>
+
+      <!-- الاستكانة / خيارات الشاي -->
+      <div class="form-grid">
+        <div class="field">
+          <label class="field-label">حجم الاستكانة</label>
+          <div class="chip-row" id="cupSizeRow"></div>
+        </div>
+
+        <div class="field">
+          <label class="field-label">السكر</label>
+          <div class="chip-row" id="sugarRow"></div>
+        </div>
+
+        <div class="field">
+          <label class="field-label">الإضافات</label>
+          <div class="chip-row" id="addonsRow"></div>
+        </div>
+
+        <div class="field">
+          <label class="field-label" for="sheetNote">ملاحظة (اختياري)</label>
+          <textarea id="sheetNote" class="note-input" rows="2" placeholder="مثال: بدون نعناع / زيادة حليب"></textarea>
+        </div>
+      </div>
+
+      <div class="qty-row">
+        <button class="qty-btn" id="qtyMinus" aria-label="نقص">−</button>
+        <div class="qty-num" id="sheetQty">1</div>
+        <button class="qty-btn" id="qtyPlus" aria-label="زيد">+</button>
+      </div>
+
+      <button class="btn btn-primary" id="addToCartBtn">أضف للسلة</button>
+    </div>
+  </div>
+
+  <!-- Bottom Sheet السلة -->
+  <div class="overlay" id="cartSheetOverlay" aria-hidden="true">
+    <div class="sheet sheet-cart" role="dialog" aria-modal="true">
+      <div class="sheet-top">
+        <div class="sheet-name">ملخص الطلب</div>
+        <button class="icon-btn icon-close" id="closeCartSheet" aria-label="إغلاق">✕</button>
+      </div>
+
+      <div class="cart-items" id="cartItemsList"></div>
+
+      <div class="divider"></div>
+
+      <div class="customer-box">
+        <div class="customer-title">بيانات العميل (اختياري)</div>
+
+        <div class="two-col">
+          <div class="field">
+            <label class="field-label" for="customerName">اسم العميل</label>
+            <input id="customerName" class="field-input" type="text" placeholder="مثال: أحمد" />
+          </div>
+
+          <div class="field">
+            <label class="field-label" for="customerPhone">رقم الجوال</label>
+            <input id="customerPhone" class="field-input" type="tel" inputmode="tel" placeholder="05xxxxxxxx" />
+          </div>
+        </div>
+      </div>
+
+      <div class="cart-footer">
+        <div class="cart-total-row">
+          <span>الإجمالي:</span>
+          <span class="total-pill" id="cartTotalBottom">0 ريال</span>
+        </div>
+
+        <button class="btn btn-whatsapp" id="sendWhatsappBtn">إرسال الطلب عبر الواتساب</button>
+
+        <div class="powered">
+          مطور بواسطة <span>MenuLink</span> • 0593937921
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
