@@ -1,430 +1,455 @@
-/***************
- * إعدادات سهلة
- ***************/
-const WHATSAPP_NUMBER = "966562802660"; // رقم محل الشاي (بدون +) 0562802660
+/***********************
+ * إعدادات المحل
+ ***********************/
+const STORE_NAME = "Tea Sola";
+const WHATSAPP_NUMBER = "966562802660"; // 0562802660 -> 966562802660
 const CURRENCY = "ر.س";
 
-/***************
- * منيو تجريبي (بدون شيت)
- ***************/
-const MENU = [
+/***********************
+ * منيو تجريبي (بدون شيت حالياً)
+ ***********************/
+const CATEGORIES = [
   {
-    category: "شاي",
-    items: [
-      { name: "شاي عدني", price: 3, desc: "حار ومضبوط" },
-      { name: "شاي كرك", price: 4, desc: "حليب + هيل" },
-      { name: "شاي مغربي", price: 4, desc: "نعناع" },
-      { name: "شاي أحمر", price: 2, desc: "كلاسيك" },
-    ]
+    id: "tea",
+    name: "الشاي",
+    products: [
+      { id: "tea_adani", name: "شاي عدني", price: 3, desc: "حار ومضبوط" },
+      { id: "tea_karak", name: "شاي كرك", price: 4, desc: "حليب + هيل" },
+      { id: "tea_moroccan", name: "شاي مغربي", price: 4, desc: "نعناع" },
+      { id: "tea_red", name: "شاي أحمر", price: 2, desc: "كلاسيك" },
+    ],
   },
   {
-    category: "قهوة",
-    items: [
-      { name: "قهوة عربية", price: 5, desc: "مع هيل" },
-      { name: "قهوة تركية", price: 6, desc: "ثقيلة" },
-      { name: "لاتيه", price: 7, desc: "كريمي" },
-      { name: "أمريكانو", price: 6, desc: "خفيف" },
-    ]
+    id: "coffee",
+    name: "القهوة",
+    products: [
+      { id: "coffee_arabic", name: "قهوة عربية", price: 5, desc: "مع هيل" },
+      { id: "coffee_turkish", name: "قهوة تركية", price: 6, desc: "ثقيلة" },
+      { id: "latte", name: "لاتيه", price: 7, desc: "كريمي" },
+      { id: "americano", name: "أمريكانو", price: 6, desc: "خفيف" },
+    ],
   },
   {
-    category: "إضافات",
-    items: [
-      { name: "نعناع", price: 1, desc: "زيادة نعناع" },
-      { name: "زنجبيل", price: 1, desc: "نكهة قوية" },
-      { name: "حليب", price: 1, desc: "زيادة حليب" },
-    ]
-  }
+    id: "addons",
+    name: "إضافات",
+    products: [
+      { id: "mint", name: "نعناع", price: 1, desc: "زيادة نعناع" },
+      { id: "ginger", name: "زنجبيل", price: 1, desc: "نكهة قوية" },
+      { id: "milk", name: "حليب", price: 1, desc: "زيادة حليب" },
+    ],
+  },
 ];
 
-/***************
- * حالة التطبيق
- ***************/
-let state = {
-  mode: null,          // dinein | takeaway | car
-  tableNo: null,
-  carType: "",
-  carColor: "",
-  cart: {}             // key -> {name, price, qty}
-};
+/***********************
+ * عناصر الصفحة
+ ***********************/
+const storeNameEl = document.getElementById("storeName");
+storeNameEl.textContent = STORE_NAME;
 
-const $ = (id) => document.getElementById(id);
+const categoryTabsEl = document.getElementById("categoryTabs");
+const menuListEl = document.getElementById("menuList");
 
-const stepStart = $("stepStart");
-const stepDetails = $("stepDetails");
-const stepMenu = $("stepMenu");
-const stepCheckout = $("stepCheckout");
+const cartBarEl = document.getElementById("cartBar");
+const cartTotalEl = document.getElementById("cartTotal");
+const cartCountEl = document.getElementById("cartCount");
+const cartTotal2El = document.getElementById("cartTotal2");
 
-const dineInBox = $("dineInBox");
-const carBox = $("carBox");
-const detailsTitle = $("detailsTitle");
+const openCartBtn = document.getElementById("openCartBtn");
+const checkoutBtn = document.getElementById("checkoutBtn");
 
-const tabs = $("tabs");
-const menuEl = $("menu");
+/* overlays */
+const productOverlay = document.getElementById("productOverlay");
+const cartOverlay = document.getElementById("cartOverlay");
+const checkoutOverlay = document.getElementById("checkoutOverlay");
 
-const overlay = $("overlay");
-const cartEl = $("cart");
+/* product sheet */
+const sheetProductName = document.getElementById("sheetProductName");
+const sheetProductPrice = document.getElementById("sheetProductPrice");
+const sheetQty = document.getElementById("sheetQty");
+const sheetNote = document.getElementById("sheetNote");
+const qtyMinus = document.getElementById("qtyMinus");
+const qtyPlus = document.getElementById("qtyPlus");
+const addToCartBtn = document.getElementById("addToCartBtn");
+const closeProduct = document.getElementById("closeProduct");
 
-const totalEl = $("total");
-const total2El = $("total2");
-const cartCountEl = $("cartCount");
+/* cart sheet */
+const cartItemsEl = document.getElementById("cartItems");
+const closeCart = document.getElementById("closeCart");
+const clearCartBtn = document.getElementById("clearCartBtn");
 
-/***************
+/* checkout sheet */
+const closeCheckout = document.getElementById("closeCheckout");
+const sendWhatsappBtn = document.getElementById("sendWhatsappBtn");
+const customerNameEl = document.getElementById("customerName");
+const customerPhoneEl = document.getElementById("customerPhone");
+
+const modeBar = document.getElementById("modeBar");
+const dineinBox = document.getElementById("dineinBox");
+const carBox = document.getElementById("carBox");
+const tablesEl = document.getElementById("tables");
+const carTypeEl = document.getElementById("carType");
+const carColorEl = document.getElementById("carColor");
+
+/***********************
+ * الحالة
+ ***********************/
+let cart = {}; 
+// cart[productId] = { id, name, price, qty, note }
+
+let currentProduct = null;
+
+let orderMode = "takeaway"; // takeaway | dinein | car
+let selectedTable = null;
+
+/***********************
  * Helpers
- ***************/
-function show(el){ el.classList.remove("hide"); }
-function hide(el){ el.classList.add("hide"); }
-
-function money(n){
+ ***********************/
+function money(n) {
   return `${n} ${CURRENCY}`;
 }
 
-function cartCount(){
-  return Object.values(state.cart).reduce((a,x)=>a + x.qty, 0);
+function openOverlay(el) {
+  el.classList.add("active");
+}
+function closeOverlay(el) {
+  el.classList.remove("active");
 }
 
-function cartTotal(){
-  return Object.values(state.cart).reduce((a,x)=>a + x.qty * x.price, 0);
+function cartCount() {
+  return Object.values(cart).reduce((a, x) => a + x.qty, 0);
 }
 
-function updateTotals(){
-  const t = cartTotal();
-  totalEl.textContent = money(t);
-  total2El.textContent = money(t);
-  cartCountEl.textContent = cartCount();
+function cartTotal() {
+  return Object.values(cart).reduce((a, x) => a + x.qty * x.price, 0);
 }
 
-function resetAll(){
-  state = { mode:null, tableNo:null, carType:"", carColor:"", cart:{} };
-  // clear inputs
-  $("custName").value = "";
-  $("custPhone").value = "";
-  $("notes").value = "";
-  $("carType").value = "";
-  $("carColor").value = "";
-  // back to start
-  hide(stepDetails); hide(stepMenu); hide(stepCheckout);
-  show(stepStart);
-  hide(overlay);
-  updateTotals();
+function updateCartUI() {
+  const total = cartTotal();
+  const count = cartCount();
+
+  cartTotalEl.textContent = money(total);
+  cartTotal2El.textContent = money(total);
+  cartCountEl.textContent = count;
+
+  if (total <= 0) cartBarEl.classList.add("hidden");
+  else cartBarEl.classList.remove("hidden");
+
+  renderCartItems();
 }
 
-function goMenu(){
-  hide(stepStart); hide(stepDetails); hide(stepCheckout);
-  show(stepMenu);
-  window.scrollTo({top:0, behavior:"smooth"});
-}
+function renderCartItems() {
+  cartItemsEl.innerHTML = "";
+  const items = Object.values(cart);
 
-function goCheckout(){
-  hide(stepMenu);
-  show(stepCheckout);
-  window.scrollTo({top:0, behavior:"smooth"});
-}
-
-/***************
- * Step: Start
- ***************/
-document.querySelectorAll(".choice").forEach(btn=>{
-  btn.addEventListener("click", ()=>{
-    state.mode = btn.dataset.mode;
-
-    if(state.mode === "takeaway"){
-      goMenu();
-      return;
-    }
-
-    hide(stepStart);
-    show(stepDetails);
-
-    if(state.mode === "dinein"){
-      detailsTitle.textContent = "طلب محلي";
-      show(dineInBox); hide(carBox);
-    }else{
-      detailsTitle.textContent = "استلام من السيارة";
-      show(carBox); hide(dineInBox);
-    }
-    window.scrollTo({top:0, behavior:"smooth"});
-  });
-});
-
-$("btnBackToStart").addEventListener("click", ()=>{
-  show(stepStart);
-  hide(stepDetails);
-});
-
-$("btnGoMenu").addEventListener("click", ()=>{
-  if(state.mode === "dinein" && !state.tableNo){
-    alert("اختَر رقم الطاولة أولاً.");
+  if (!items.length) {
+    cartItemsEl.innerHTML = `<div style="color:#b9c2cc;font-size:13px;text-align:center;padding:10px;">السلة فاضية.</div>`;
     return;
   }
-  if(state.mode === "car"){
-    const t = $("carType").value.trim();
-    const c = $("carColor").value.trim();
-    if(!t || !c){
-      alert("اختَر نوع السيارة واللون.");
-      return;
-    }
-    state.carType = t;
-    state.carColor = c;
-  }
-  goMenu();
+
+  // ترتيب حسب الاسم
+  items.sort((a, b) => a.name.localeCompare(b.name, "ar"));
+
+  items.forEach((it) => {
+    const row = document.createElement("div");
+    row.className = "cartRow";
+
+    const left = document.createElement("div");
+    left.innerHTML = `
+      <div class="cartName">${it.name}</div>
+      <div class="cartMeta">الكمية: ${it.qty}${it.note ? ` — ملاحظة: ${it.note}` : ""}</div>
+    `;
+
+    const right = document.createElement("div");
+    right.className = "cartRight";
+
+    const sum = document.createElement("div");
+    sum.className = "cartSum";
+    sum.textContent = money(it.qty * it.price);
+
+    const del = document.createElement("button");
+    del.className = "remove";
+    del.textContent = "×";
+    del.addEventListener("click", () => {
+      if (confirm("متأكد تحذف الصنف؟")) {
+        delete cart[it.id];
+        updateCartUI();
+      }
+    });
+
+    right.appendChild(sum);
+    right.appendChild(del);
+
+    row.appendChild(left);
+    row.appendChild(right);
+
+    cartItemsEl.appendChild(row);
+  });
+}
+
+/***********************
+ * Tabs + Menu (كل الأقسام تحت بعض)
+ ***********************/
+function renderTabs() {
+  categoryTabsEl.innerHTML = "";
+  CATEGORIES.forEach((cat, idx) => {
+    const btn = document.createElement("button");
+    btn.className = "tab" + (idx === 0 ? " active" : "");
+    btn.textContent = cat.name;
+
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".tab").forEach((t) => t.classList.remove("active"));
+      btn.classList.add("active");
+
+      const section = document.getElementById(`section-${cat.id}`);
+      if (section) section.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+
+    categoryTabsEl.appendChild(btn);
+  });
+}
+
+function renderMenu() {
+  menuListEl.innerHTML = "";
+
+  CATEGORIES.forEach((cat) => {
+    const section = document.createElement("section");
+    section.className = "section";
+    section.id = `section-${cat.id}`;
+
+    const title = document.createElement("h2");
+    title.className = "sectionTitle";
+    title.textContent = cat.name;
+    section.appendChild(title);
+
+    cat.products.forEach((p) => {
+      const item = document.createElement("div");
+      item.className = "item";
+
+      const left = document.createElement("div");
+      left.innerHTML = `
+        <div class="itemName">${p.name}</div>
+        <div class="itemSub">${p.desc || ""}</div>
+      `;
+
+      const right = document.createElement("div");
+      right.style.display = "flex";
+      right.style.alignItems = "center";
+      right.style.gap = "10px";
+      right.innerHTML = `
+        <div class="itemPrice">${money(p.price)}</div>
+        <div class="arrow">›</div>
+      `;
+
+      item.appendChild(left);
+      item.appendChild(right);
+
+      item.addEventListener("click", () => openProductSheet(p));
+      section.appendChild(item);
+    });
+
+    menuListEl.appendChild(section);
+  });
+}
+
+/***********************
+ * Product sheet
+ ***********************/
+function openProductSheet(product) {
+  currentProduct = product;
+  sheetQty.textContent = "1";
+  sheetNote.value = "";
+  sheetProductName.textContent = product.name;
+  sheetProductPrice.textContent = money(product.price);
+  openOverlay(productOverlay);
+}
+
+closeProduct.addEventListener("click", () => closeOverlay(productOverlay));
+
+productOverlay.addEventListener("click", (e) => {
+  if (e.target === productOverlay) closeOverlay(productOverlay);
 });
 
-$("btnReset").addEventListener("click", resetAll);
+qtyPlus.addEventListener("click", () => {
+  sheetQty.textContent = String(parseInt(sheetQty.textContent, 10) + 1);
+});
+qtyMinus.addEventListener("click", () => {
+  const q = parseInt(sheetQty.textContent, 10);
+  if (q > 1) sheetQty.textContent = String(q - 1);
+});
 
-/***************
- * Tables UI
- ***************/
-function buildTables(){
-  const box = $("tables");
-  box.innerHTML = "";
-  for(let i=1;i<=30;i++){
+addToCartBtn.addEventListener("click", () => {
+  if (!currentProduct) return;
+
+  const qty = parseInt(sheetQty.textContent, 10);
+  const note = sheetNote.value.trim();
+
+  const existing = cart[currentProduct.id] || {
+    id: currentProduct.id,
+    name: currentProduct.name,
+    price: currentProduct.price,
+    qty: 0,
+    note: ""
+  };
+
+  existing.qty += qty;
+  if (note) existing.note = note; // آخر ملاحظة تستبدل
+  cart[currentProduct.id] = existing;
+
+  updateCartUI();
+  closeOverlay(productOverlay);
+});
+
+/***********************
+ * Cart sheet
+ ***********************/
+openCartBtn.addEventListener("click", () => openOverlay(cartOverlay));
+closeCart.addEventListener("click", () => closeOverlay(cartOverlay));
+cartOverlay.addEventListener("click", (e) => {
+  if (e.target === cartOverlay) closeOverlay(cartOverlay);
+});
+
+clearCartBtn.addEventListener("click", () => {
+  if (confirm("متأكد تبغى تفريغ السلة؟")) {
+    cart = {};
+    updateCartUI();
+  }
+});
+
+/***********************
+ * Checkout sheet (طريقة الاستلام داخل الإتمام)
+ ***********************/
+function setMode(mode) {
+  orderMode = mode;
+
+  document.querySelectorAll(".modeBtn").forEach((b) => b.classList.remove("active"));
+  document.querySelector(`.modeBtn[data-mode="${mode}"]`).classList.add("active");
+
+  // إخفاء/إظهار
+  dineinBox.classList.add("hidden");
+  carBox.classList.add("hidden");
+
+  if (mode === "dinein") dineinBox.classList.remove("hidden");
+  if (mode === "car") carBox.classList.remove("hidden");
+}
+
+modeBar.addEventListener("click", (e) => {
+  const btn = e.target.closest(".modeBtn");
+  if (!btn) return;
+  setMode(btn.dataset.mode);
+});
+
+function buildTables() {
+  tablesEl.innerHTML = "";
+  for (let i = 1; i <= 30; i++) {
     const b = document.createElement("button");
-    b.className = "tbtn";
+    b.className = "tableBtn";
     b.textContent = i;
-    b.addEventListener("click", ()=>{
-      state.tableNo = i;
-      box.querySelectorAll(".tbtn").forEach(x=>x.classList.remove("active"));
+
+    b.addEventListener("click", () => {
+      selectedTable = i;
+      tablesEl.querySelectorAll(".tableBtn").forEach((x) => x.classList.remove("active"));
       b.classList.add("active");
     });
-    box.appendChild(b);
+
+    tablesEl.appendChild(b);
   }
 }
 buildTables();
 
-/***************
- * Menu UI
- ***************/
-let activeCat = MENU[0].category;
-
-function keyFor(item){
-  return `${activeCat}__${item.name}`;
-}
-
-function buildTabs(){
-  tabs.innerHTML = "";
-  MENU.forEach(cat=>{
-    const t = document.createElement("button");
-    t.className = "tab" + (cat.category===activeCat ? " active" : "");
-    t.textContent = cat.category;
-    t.addEventListener("click", ()=>{
-      activeCat = cat.category;
-      buildTabs();
-      buildMenu();
-    });
-    tabs.appendChild(t);
-  });
-}
-
-function buildMenu(){
-  menuEl.innerHTML = "";
-  const cat = MENU.find(x=>x.category===activeCat);
-  cat.items.forEach(item=>{
-    const k = `${activeCat}__${item.name}`;
-    const inCart = state.cart[k]?.qty || 0;
-
-    const card = document.createElement("div");
-    card.className = "item";
-
-    card.innerHTML = `
-      <div class="itemTop">
-        <div>
-          <div class="itemName">${item.name}</div>
-          <div class="itemDesc">${item.desc || ""}</div>
-        </div>
-        <div class="itemPrice">${money(item.price)}</div>
-      </div>
-
-      <div class="qtyRow">
-        <div class="itemDesc">الكمية</div>
-        <div class="qtyBtns">
-          <button class="qbtn" data-act="minus">−</button>
-          <div class="qnum">${inCart}</div>
-          <button class="qbtn" data-act="plus">+</button>
-        </div>
-      </div>
-    `;
-
-    const qnum = card.querySelector(".qnum");
-    const minus = card.querySelector('[data-act="minus"]');
-    const plus = card.querySelector('[data-act="plus"]');
-
-    plus.addEventListener("click", ()=>{
-      if(!state.cart[k]) state.cart[k] = { name:item.name, price:item.price, qty:0, cat:activeCat };
-      state.cart[k].qty++;
-      qnum.textContent = state.cart[k].qty;
-      updateTotals();
-    });
-
-    minus.addEventListener("click", ()=>{
-      if(!state.cart[k]) return;
-      state.cart[k].qty--;
-      if(state.cart[k].qty <= 0) delete state.cart[k];
-      qnum.textContent = state.cart[k]?.qty || 0;
-      updateTotals();
-    });
-
-    menuEl.appendChild(card);
-  });
-
-  updateTotals();
-}
-
-buildTabs();
-buildMenu();
-
-/***************
- * Cart Overlay
- ***************/
-function openOverlay(){
-  renderCart();
-  show(overlay);
-}
-function closeOverlay(){
-  hide(overlay);
-}
-
-$("btnOpenCart").addEventListener("click", openOverlay);
-$("btnCloseOverlay").addEventListener("click", closeOverlay);
-overlay.addEventListener("click", (e)=>{
-  if(e.target === overlay) closeOverlay();
-});
-
-function renderCart(){
-  cartEl.innerHTML = "";
-  const items = Object.values(state.cart);
-
-  if(items.length === 0){
-    cartEl.innerHTML = `<div class="itemDesc">السلة فاضية.</div>`;
-    updateTotals();
-    return;
-  }
-
-  // ترتيب حسب القسم ثم الاسم
-  items.sort((a,b)=> (a.cat||"").localeCompare(b.cat||"") || a.name.localeCompare(b.name));
-
-  items.forEach(it=>{
-    const row = document.createElement("div");
-    row.className = "cartRow";
-    row.innerHTML = `
-      <div>
-        <div class="cartName">${it.name}</div>
-        <div class="cartMeta">${it.qty} × ${money(it.price)}</div>
-      </div>
-      <div class="qtyBtns">
-        <button class="qbtn">−</button>
-        <div class="qnum">${it.qty}</div>
-        <button class="qbtn">+</button>
-      </div>
-    `;
-    const [minus, , plus] = row.querySelectorAll(".qbtn, .qnum, .qbtn"); // won't work as intended
-    // safer:
-    const btns = row.querySelectorAll(".qbtn");
-    const minusBtn = btns[0];
-    const plusBtn  = btns[1];
-    const numEl = row.querySelector(".qnum");
-
-    const key = `${it.cat}__${it.name}`;
-
-    plusBtn.addEventListener("click", ()=>{
-      state.cart[key].qty++;
-      numEl.textContent = state.cart[key].qty;
-      row.querySelector(".cartMeta").textContent = `${state.cart[key].qty} × ${money(it.price)}`;
-      updateTotals();
-    });
-
-    minusBtn.addEventListener("click", ()=>{
-      state.cart[key].qty--;
-      if(state.cart[key].qty <= 0){
-        delete state.cart[key];
-        renderCart();
-        return;
-      }
-      numEl.textContent = state.cart[key].qty;
-      row.querySelector(".cartMeta").textContent = `${state.cart[key].qty} × ${money(it.price)}`;
-      updateTotals();
-    });
-
-    cartEl.appendChild(row);
-  });
-
-  updateTotals();
-}
-
-$("btnClearCart").addEventListener("click", ()=>{
-  if(confirm("متأكد تبغى تفريغ السلة؟")){
-    state.cart = {};
-    renderCart();
-    buildMenu();
-  }
-});
-
-/***************
- * Checkout
- ***************/
-$("btnCheckout").addEventListener("click", ()=>{
-  if(cartCount() === 0){
+checkoutBtn.addEventListener("click", () => {
+  if (cartCount() === 0) {
     alert("السلة فاضية. اختر أصناف أولاً.");
     return;
   }
-  goCheckout();
+  openOverlay(checkoutOverlay);
+  // الافتراضي سفري
+  setMode(orderMode || "takeaway");
 });
 
-$("btnBackToMenu").addEventListener("click", ()=>{
-  hide(stepCheckout);
-  show(stepMenu);
+closeCheckout.addEventListener("click", () => closeOverlay(checkoutOverlay));
+checkoutOverlay.addEventListener("click", (e) => {
+  if (e.target === checkoutOverlay) closeOverlay(checkoutOverlay);
 });
 
-$("btnSend").addEventListener("click", ()=>{
-  const name = $("custName").value.trim();
-  const phone = $("custPhone").value.trim();
-  const notes = $("notes").value.trim();
+/***********************
+ * إرسال واتساب
+ ***********************/
+sendWhatsappBtn.addEventListener("click", () => {
+  const name = customerNameEl.value.trim();
+  const phone = customerPhoneEl.value.trim();
 
-  if(!name || !phone){
-    alert("الرجاء تعبئة الاسم ورقم الجوال.");
+  if (!name || !phone) {
+    alert("اكتب اسم العميل ورقم الجوال.");
     return;
   }
-  if(cartCount() === 0){
+  if (cartCount() === 0) {
     alert("السلة فاضية.");
     return;
   }
 
-  const t = cartTotal();
+  // تحقق طريقة الاستلام
+  let modeText = "سفري";
+  let extra = "";
 
-  // رأس الرسالة حسب النوع
-  let header = `السلام عليكم ورحمة الله وبركاته 🌹\n\n`;
-  header += `طلب جديد من Tea Sola\n`;
-  header += `👤 الاسم: ${name}\n`;
-  header += `📱 الجوال: ${phone}\n`;
-
-  if(state.mode === "dinein"){
-    header += `🍽️ النوع: محلي\n`;
-    header += `🔢 رقم الطاولة: ${state.tableNo}\n`;
-  } else if(state.mode === "car"){
-    header += `🚗 النوع: استلام من السيارة\n`;
-    header += `🚘 السيارة: ${state.carType} - ${state.carColor}\n`;
-  } else {
-    header += `🧾 النوع: سفري\n`;
+  if (orderMode === "dinein") {
+    modeText = "محلي";
+    if (!selectedTable) {
+      alert("اختَر رقم الطاولة.");
+      return;
+    }
+    extra = `🔢 رقم الطاولة: ${selectedTable}\n`;
+  } else if (orderMode === "car") {
+    modeText = "استلام من السيارة";
+    const ct = carTypeEl.value.trim();
+    const cc = carColorEl.value.trim();
+    if (!ct || !cc) {
+      alert("اختَر نوع السيارة واللون.");
+      return;
+    }
+    extra = `🚗 السيارة: ${ct} - ${cc}\n`;
   }
 
-  header += `\n— الأصناف —\n`;
+  let total = 0;
+  let msg =
+`السلام عليكم ورحمة الله وبركاته 🌹
 
-  const lines = Object.values(state.cart)
-    .sort((a,b)=> (a.cat||"").localeCompare(b.cat||"") || a.name.localeCompare(b.name))
-    .map(it => `• ${it.name} × ${it.qty} = ${money(it.qty * it.price)}`)
-    .join("\n");
+طلب جديد من ${STORE_NAME}
 
-  let msg = header + lines + `\n\nالإجمالي: ${money(t)}\n`;
+👤 الاسم: ${name}
+📱 الجوال: ${phone}
+🧾 النوع: ${modeText}
+${extra}
+— الأصناف —
+`;
 
-  if(notes){
-    msg += `\nملاحظات: ${notes}\n`;
-  }
+  Object.values(cart).forEach((it) => {
+    const line = it.qty * it.price;
+    total += line;
+    msg += `• ${it.name} × ${it.qty} = ${money(line)}`;
+    if (it.note) msg += ` (ملاحظة: ${it.note})`;
+    msg += `\n`;
+  });
 
-  msg += `\n📲 MenuLink`;
+  msg += `\nالإجمالي: ${money(total)}\n`;
+  msg += `\n📲 مطوّر من MenuLink — 0593937921`;
 
   const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
   window.open(url, "_blank");
 
-  // بعد الإرسال: يفضّل يرجع للمنيو ويفرّغ البيانات (زي ما تحب)
-  // تقدر تغيّر هذا لو تبي
-  resetAll();
+  // تنظيف بعد الإرسال
+  cart = {};
+  selectedTable = null;
+  carTypeEl.value = "";
+  carColorEl.value = "";
+  customerNameEl.value = "";
+  customerPhoneEl.value = "";
+  updateCartUI();
+  closeOverlay(checkoutOverlay);
 });
+
+/***********************
+ * تشغيل أولي
+ ***********************/
+renderTabs();
+renderMenu();
+updateCartUI();
