@@ -2,164 +2,150 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
   <title>Tea Sola | منيو</title>
   <link rel="stylesheet" href="style.css" />
 </head>
+
 <body>
-
-  <!-- خلفية -->
-  <div class="bg"></div>
-
-  <!-- هيدر -->
-  <header class="topbar">
+  <!-- Header -->
+  <header class="header">
     <div class="brand">
-      <div class="logo">☕</div>
+      <div class="logo" id="logoBox">☕</div>
       <div class="brandText">
-        <div class="title">Tea Sola</div>
-        <div class="sub">اطلب بطريقتك — محلي / سفري / استلام من السيارة</div>
+        <div class="storeName" id="storeName">Tea Sola</div>
+        <div class="storeSub" id="storeSub">منيو إلكتروني — الطلب يوصل واتساب بضغطة زر</div>
       </div>
     </div>
 
-    <button class="ghost" id="btnReset" title="بدء جديد">بدء جديد</button>
+    <button class="ghost" id="openCartBtn">السلة <span class="badge" id="cartCount">0</span></button>
   </header>
 
-  <main class="wrap">
+  <!-- Category tabs -->
+  <nav class="tabs" id="categoryTabs"></nav>
 
-    <!-- كرت الرئيسي -->
-    <section class="card" id="stepStart">
-      <h1 class="h1">اختر طريقة الاستلام</h1>
-      <p class="p">حدد نوع الطلب، وبعدها بتطلع لك الخيارات المناسبة.</p>
+  <!-- Menu (all sections under each other) -->
+  <main class="menu" id="menuList"></main>
 
-      <div class="grid3">
-        <button class="choice" data-mode="dinein">
-          <span class="big">محلي</span>
-          <span class="small">اختيار رقم الطاولة</span>
-        </button>
+  <!-- Bottom cart bar -->
+  <footer class="cartBar hidden" id="cartBar">
+    <div class="cartInfo">
+      <div class="cartLabel">الإجمالي</div>
+      <div class="cartTotal" id="cartTotal">0 ر.س</div>
+    </div>
+    <button class="primary" id="checkoutBtn">إتمام الطلب</button>
+  </footer>
 
-        <button class="choice" data-mode="takeaway">
-          <span class="big">سفري</span>
-          <span class="small">يدخلك على المنيو مباشرة</span>
-        </button>
-
-        <button class="choice" data-mode="car">
-          <span class="big">استلام من السيارة</span>
-          <span class="small">نوع السيارة + اللون</span>
-        </button>
-      </div>
-    </section>
-
-    <!-- خطوة: محلي / سيارة -->
-    <section class="card hide" id="stepDetails">
-      <div class="rowBetween">
-        <h2 class="h2" id="detailsTitle">تفاصيل</h2>
-        <button class="ghost" id="btnBackToStart">رجوع</button>
-      </div>
-
-      <!-- محلي -->
-      <div class="hide" id="dineInBox">
-        <label class="label">رقم الطاولة</label>
-        <div class="tableGrid" id="tables"></div>
-        <div class="hint">اختر رقم الطاولة — تقدر تغيّرها بأي وقت.</div>
-      </div>
-
-      <!-- سيارة -->
-      <div class="hide" id="carBox">
-        <label class="label">نوع السيارة</label>
-        <select class="input" id="carType">
-          <option value="">اختر</option>
-          <option>سيدان</option>
-          <option>SUV</option>
-          <option>هايبرد</option>
-          <option>بيك أب</option>
-          <option>فان</option>
-          <option>أخرى</option>
-        </select>
-
-        <label class="label">لون السيارة</label>
-        <select class="input" id="carColor">
-          <option value="">اختر</option>
-          <option>أبيض</option>
-          <option>أسود</option>
-          <option>فضي</option>
-          <option>رمادي</option>
-          <option>أزرق</option>
-          <option>أحمر</option>
-          <option>أخرى</option>
-        </select>
-
-        <div class="hint">اكتب ملاحظات إضافية لو تحب في نهاية الطلب.</div>
-      </div>
-
-      <div class="actions">
-        <button class="primary" id="btnGoMenu">متابعة للمنيو</button>
-      </div>
-    </section>
-
-    <!-- المنيو -->
-    <section class="card hide" id="stepMenu">
-      <div class="rowBetween">
-        <h2 class="h2">المنيو</h2>
-        <button class="ghost" id="btnOpenCart">السلة <span class="badge" id="cartCount">0</span></button>
-      </div>
-
-      <div class="tabs" id="tabs"></div>
-      <div class="menu" id="menu"></div>
-
-      <div class="footerBar">
-        <div class="totalBox">
-          <div class="totalLabel">الإجمالي</div>
-          <div class="totalValue" id="total">0</div>
+  <!-- Product bottom sheet -->
+  <div class="overlay" id="productOverlay">
+    <div class="sheet">
+      <div class="sheetHeader">
+        <div>
+          <div class="sheetTitle" id="sheetProductName">—</div>
+          <div class="sheetPrice" id="sheetProductPrice">0 ر.س</div>
         </div>
-        <button class="primary" id="btnCheckout">إتمام الطلب</button>
-      </div>
-    </section>
-
-    <!-- بيانات العميل -->
-    <section class="card hide" id="stepCheckout">
-      <div class="rowBetween">
-        <h2 class="h2">بيانات الطلب</h2>
-        <button class="ghost" id="btnBackToMenu">رجوع للمنيو</button>
+        <button class="xbtn" id="closeProduct">×</button>
       </div>
 
-      <div class="form2">
+      <div class="qtyRow">
+        <button class="qtyBtn" id="qtyMinus">−</button>
+        <div class="qtyNum" id="sheetQty">1</div>
+        <button class="qtyBtn" id="qtyPlus">+</button>
+      </div>
+
+      <label class="label">ملاحظة للصنف (اختياري)</label>
+      <input class="input" id="sheetNote" placeholder="مثال: بدون سكر / زيادة نعناع" />
+
+      <button class="primary" id="addToCartBtn">أضف للسلة</button>
+    </div>
+  </div>
+
+  <!-- Cart bottom sheet -->
+  <div class="overlay" id="cartOverlay">
+    <div class="sheet">
+      <div class="sheetHeader">
+        <div class="sheetTitle">سلة الطلب</div>
+        <button class="xbtn" id="closeCart">×</button>
+      </div>
+
+      <div class="cartList" id="cartItems"></div>
+
+      <div class="sheetFooter">
+        <button class="ghost danger" id="clearCartBtn">تفريغ السلة</button>
+        <div class="sumText">الإجمالي: <b id="cartTotal2">0 ر.س</b></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Checkout bottom sheet -->
+  <div class="overlay" id="checkoutOverlay">
+    <div class="sheet">
+      <div class="sheetHeader">
+        <div class="sheetTitle">إتمام الطلب</div>
+        <button class="xbtn" id="closeCheckout">×</button>
+      </div>
+
+      <!-- Mode selector -->
+      <div class="modeBar" id="modeBar">
+        <button class="modeBtn active" data-mode="takeaway">سفري</button>
+        <button class="modeBtn" data-mode="dinein">محلي</button>
+        <button class="modeBtn" data-mode="car">استلام من السيارة</button>
+      </div>
+
+      <!-- Dine-in tables -->
+      <div class="modeBox hidden" id="dineinBox">
+        <div class="modeTitle">اختر رقم الطاولة</div>
+        <div class="tables" id="tables"></div>
+      </div>
+
+      <!-- Car details -->
+      <div class="modeBox hidden" id="carBox">
+        <div class="modeTitle">بيانات السيارة</div>
+        <div class="grid2">
+          <div>
+            <label class="label">نوع السيارة</label>
+            <select class="input" id="carType">
+              <option value="">اختر</option>
+              <option>سيدان</option>
+              <option>SUV</option>
+              <option>بيك أب</option>
+              <option>فان</option>
+              <option>أخرى</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="label">لون السيارة</label>
+            <select class="input" id="carColor">
+              <option value="">اختر</option>
+              <option>أبيض</option>
+              <option>أسود</option>
+              <option>فضي</option>
+              <option>رمادي</option>
+              <option>أزرق</option>
+              <option>أحمر</option>
+              <option>أخرى</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Customer -->
+      <div class="grid2">
         <div>
           <label class="label">اسم العميل</label>
-          <input class="input" id="custName" placeholder="اكتب الاسم" />
+          <input class="input" id="customerName" placeholder="اكتب الاسم" />
         </div>
         <div>
           <label class="label">رقم الجوال</label>
-          <input class="input" id="custPhone" inputmode="tel" placeholder="05xxxxxxxx" />
+          <input class="input" id="customerPhone" inputmode="tel" placeholder="05xxxxxxxx" />
         </div>
       </div>
 
-      <label class="label">ملاحظات (اختياري)</label>
-      <textarea class="input area" id="notes" placeholder="بدون سكر… زيادة نعناع… إلخ"></textarea>
+      <button class="whatsappBtn" id="sendWhatsappBtn">إرسال الطلب واتساب</button>
 
-      <div class="actions">
-        <button class="primary" id="btnSend">إرسال الطلب واتساب</button>
-      </div>
-
-      <div class="tiny">
-        مطوّر بواسطة <b>MenuLink</b> 📲
-      </div>
-    </section>
-
-  </main>
-
-  <!-- سلة (Overlay) -->
-  <div class="overlay hide" id="overlay">
-    <div class="sheet">
-      <div class="rowBetween">
-        <h3 class="h3">سلة الطلب</h3>
-        <button class="x" id="btnCloseOverlay">×</button>
-      </div>
-
-      <div class="cart" id="cart"></div>
-
-      <div class="rowBetween cartFooter">
-        <button class="ghost danger" id="btnClearCart">تفريغ السلة</button>
-        <div class="totalInline">الإجمالي: <b id="total2">0</b></div>
+      <div class="powered">
+        مطوّر من <b>MenuLink</b> — 0593937921
       </div>
     </div>
   </div>
