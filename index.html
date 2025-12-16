@@ -24,7 +24,7 @@
   <!-- Category tabs -->
   <nav class="tabs" id="categoryTabs"></nav>
 
-  <!-- Menu (all sections under each other) -->
+  <!-- Menu -->
   <main class="menu" id="menuList"></main>
 
   <!-- Bottom cart bar -->
@@ -51,6 +51,12 @@
         <button class="qtyBtn" id="qtyMinus">−</button>
         <div class="qtyNum" id="sheetQty">1</div>
         <button class="qtyBtn" id="qtyPlus">+</button>
+      </div>
+
+      <!-- إضافات الصنف -->
+      <div id="addonsBlock" class="addonsBlock hidden">
+        <div class="addonsTitle">إضافات (اختياري)</div>
+        <div class="addonsList" id="sheetAddons"></div>
       </div>
 
       <label class="label">ملاحظة للصنف (اختياري)</label>
@@ -92,9 +98,22 @@
         <button class="modeBtn" data-mode="car">استلام من السيارة</button>
       </div>
 
+      <!-- الطلب كامل تحت شريط الاستلام -->
+      <div class="orderPreview">
+        <div class="orderPreviewTitle">ملخص الطلب</div>
+        <div class="orderPreviewList" id="checkoutItems"></div>
+        <div class="orderPreviewTotal">الإجمالي: <b id="checkoutTotal">0 ر.س</b></div>
+      </div>
+
       <!-- Dine-in tables -->
       <div class="modeBox hidden" id="dineinBox">
         <div class="modeTitle">اختر رقم الطاولة</div>
+
+        <div class="tableSelected hidden" id="tableSelectedLine">
+          <span class="chip" id="tableChip">طاولة —</span>
+          <button class="ghost small" id="changeTableBtn">تغيير</button>
+        </div>
+
         <div class="tables" id="tables"></div>
       </div>
 
