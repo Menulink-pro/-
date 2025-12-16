@@ -5,18 +5,17 @@
   --text:#f7fafc;
   --muted:#b9c2cc;
 
-  /* ألوان محل شاي */
   --tea:#e0b75a;      /* ذهبي */
   --teaDeep:#c79b2f;
   --mint:#3ddc97;
 
-  --wa:#22c55e;       /* زر واتساب */
+  --wa:#22c55e;       /* واتساب */
   --shadow: 0 20px 60px #00000080;
 }
 
 *{box-sizing:border-box}
 html,body{margin:0; padding:0; background:var(--bg); color:var(--text); font-family:system-ui,-apple-system,"Segoe UI",Tahoma,Arial}
-input, select, textarea{font-size:16px} /* مهم عشان سفاري ما يسوي زوم */
+input, select, textarea{font-size:16px} /* يمنع زوم سفاري */
 
 .header{
   position:sticky; top:0; z-index:10;
@@ -47,6 +46,7 @@ input, select, textarea{font-size:16px} /* مهم عشان سفاري ما يس�
 }
 .ghost:hover{border-color:#ffffff33}
 .danger{border-color:#ff3b3b33; color:#ffb6b6}
+.small{padding:8px 10px; border-radius:12px; font-size:13px}
 
 .badge{
   display:inline-grid; place-items:center;
@@ -265,8 +265,9 @@ input, select, textarea{font-size:16px} /* مهم عشان سفاري ما يس�
   cursor:pointer;
 }
 .modeBtn.active{
-  border-color:#ffffff33;
-  background: linear-gradient(135deg,#0a121a,#101a24);
+  border-color:#ffd58066;
+  background: linear-gradient(135deg, var(--tea), var(--teaDeep));
+  color:#1b1207;
 }
 
 .modeBox{margin-top:12px}
@@ -322,4 +323,48 @@ input, select, textarea{font-size:16px} /* مهم عشان سفاري ما يس�
   color:var(--muted);
   font-size:12.5px;
   margin-top:12px;
+}
+
+/* --- إضافات داخل الصنف --- */
+.addonsBlock{margin-top:6px}
+.addonsTitle{font-weight:900; color:#ffe4a6; margin-top:6px; margin-bottom:8px}
+.addonsList{display:flex; flex-direction:column; gap:10px}
+.addonRow{
+  display:flex; justify-content:space-between; align-items:center; gap:10px;
+  border:1px solid var(--stroke);
+  background:#0a121a;
+  padding:10px 12px;
+  border-radius:14px;
+}
+.addonLeft{display:flex; align-items:center; gap:10px}
+.addonRow input{width:18px; height:18px}
+.addonPrice{color:var(--tea); font-weight:900; font-size:13px}
+
+/* --- ملخص الطلب داخل الإتمام --- */
+.orderPreview{
+  margin-top:12px;
+  border:1px solid var(--stroke);
+  background:#0a121a;
+  border-radius:18px;
+  padding:12px;
+}
+.orderPreviewTitle{font-weight:900; color:#ffe4a6; margin-bottom:10px}
+.orderPreviewList{display:flex; flex-direction:column; gap:10px; max-height:26vh; overflow:auto}
+.orderPreviewTotal{margin-top:10px; color:var(--muted)}
+.orderPreviewTotal b{color:var(--mint)}
+
+/* --- طاولة مختارة --- */
+.tableSelected{
+  display:flex; align-items:center; justify-content:space-between;
+  gap:10px;
+  margin-bottom:10px;
+}
+.chip{
+  display:inline-flex; align-items:center; gap:8px;
+  padding:10px 12px;
+  border-radius:999px;
+  border:1px solid #ffd58066;
+  background: linear-gradient(135deg, #2a1f10, #0a121a);
+  font-weight:900;
+  color:#ffe4a6;
 }
